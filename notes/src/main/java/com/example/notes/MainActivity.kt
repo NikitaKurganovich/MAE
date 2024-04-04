@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
 
 
-        val fragment = ShowNotesFragment()
+        val fragment = NoteEditingFragment()
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.add(R.id.container,fragment,"s")
