@@ -41,4 +41,10 @@ class NotesListAdapter(
             listener.onNoteClick(position)
         }
     }
+
+    fun updateAdapter(newList: MutableList<Note>){
+        notes = newList
+        notifyDataSetChanged()
+    }
+
 }

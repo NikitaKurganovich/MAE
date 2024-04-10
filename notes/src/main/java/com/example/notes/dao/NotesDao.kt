@@ -5,19 +5,19 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.notes.models.NoteEntity
+import com.example.notes.models.Note
 
 @Dao
 interface NotesDao {
-    @Insert(entity = NoteEntity::class)
-    fun insertNote(entity: NoteEntity)
+    @Insert(entity = Note::class)
+    fun insertNote(entity: Note)
 
     @Query("SELECT * FROM notes")
-    fun getAllNotes(): MutableList<NoteEntity>
+    fun getAllNotes(): MutableList<Note>
 
     @Delete
-    fun deleteNote(note: NoteEntity)
+    fun deleteNote(note: Note)
 
     @Update
-    fun updateNote(note: NoteEntity)
+    fun updateNote(note: Note)
 }

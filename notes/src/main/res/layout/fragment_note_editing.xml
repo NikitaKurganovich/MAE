@@ -57,7 +57,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/toolBar">
 
                 <EditText
-                    android:id="@+id/editTextText2"
+                    android:id="@+id/titleTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -74,7 +74,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/toolBar" />
 
                 <EditText
-                    android:id="@+id/editTextText3"
+                    android:id="@+id/textTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

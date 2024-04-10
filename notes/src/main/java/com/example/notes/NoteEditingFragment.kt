@@ -8,17 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.notes.databinding.FragmentNoteEditingBinding
 import com.example.notes.db.Dependencies
-import com.example.notes.vm.NoteEditingVM
+import com.example.notes.vm.MainVM
+import com.example.notes.vm.MainVmFactory
 import com.google.android.material.appbar.MaterialToolbar
 
 
-class NoteEditingFragment : Fragment() {
+class NoteEditingFragment(private val id: Int?) : Fragment() {
 
     private lateinit var binding: FragmentNoteEditingBinding
+    private lateinit var vm: MainVM
+
     private lateinit var toolBar: MaterialToolbar
-    private val vm by lazy { NoteEditingVM(Dependencies.noteRepository) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +34,21 @@ class NoteEditingFragment : Fragment() {
         Log.d("FragmentLifeCycle", "ON CREATE")
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         Log.d("FragmentLifeCycle", "ON CREATE VIEW")
+
+        val factory = MainVmFactory(Dependencies.noteRepository)
+        vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
+        Log.d("ViewModel object link:", vm.toString())
+
         binding = FragmentNoteEditingBinding.inflate(inflater)
+
         setUpToolBar()
+        setUpEditTexts()
 
         return binding.root
     }
@@ -47,7 +59,13 @@ class NoteEditingFragment : Fragment() {
         toolBar.setNavigationOnClickListener {
             Toast.makeText(binding.root.context, "toolbar", Toast.LENGTH_SHORT).show()
             requireActivity().supportFragmentManager.popBackStack()
-            vm.insertNote()
+        }
+    }
+
+    private fun setUpEditTexts() {
+        if (id != null) {
+            binding.titleTV.setText(vm.notesList.value!![id].title)
+            binding.textTV.setText(vm.notesList.value!![id].description)
         }
     }
 
@@ -78,6 +96,12 @@ class NoteEditingFragment : Fragment() {
 
     override fun onStop() {
         Log.d("FragmentLifeCycle", "onStop")
+
+        val title = binding.titleTV.text.toString()
+        val text = binding.textTV.text.toString()
+
+        vm.updateOrCreateNote(id, title, text)
+
         super.onStop()
     }
 
