@@ -7,8 +7,8 @@ import kotlinx.coroutines.withContext
 
 class NoteRepository(private val notesDao: NotesDao) {
 
-    suspend fun insertNewStatisticData(note: Note) {
-        withContext(Dispatchers.IO) {
+    suspend fun insertNewStatisticData(note: Note): Long {
+        return  withContext(Dispatchers.IO) {
             notesDao.insertNote(note)
         }
     }
@@ -25,9 +25,9 @@ class NoteRepository(private val notesDao: NotesDao) {
         }
     }
 
-    suspend fun deleteNote(note: Note) {
+    suspend fun deleteNote(id: Int) {
         withContext(Dispatchers.IO) {
-            notesDao.deleteNote(note)
+            notesDao.deleteNote(id)
         }
     }
 

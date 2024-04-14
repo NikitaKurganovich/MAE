@@ -1,6 +1,5 @@
 package com.example.notes
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,23 +12,22 @@ import com.example.notes.databinding.FragmentNoteEditingBinding
 import com.example.notes.db.Dependencies
 import com.example.notes.vm.MainVM
 import com.example.notes.vm.MainVmFactory
+import com.example.notes.vm.ShowMessage
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 
 
-class NoteEditingFragment(private val id: Int?) : Fragment() {
+class NoteEditingFragment : Fragment(), ShowMessage {
 
     private lateinit var binding: FragmentNoteEditingBinding
     private lateinit var vm: MainVM
 
     private lateinit var toolBar: MaterialToolbar
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Dependencies.init(requireContext().applicationContext)
         activity?.actionBar?.setHomeButtonEnabled(true)
-
-
 
         Log.d("FragmentLifeCycle", "ON CREATE")
     }
@@ -45,12 +43,25 @@ class NoteEditingFragment(private val id: Int?) : Fragment() {
         vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
         Log.d("ViewModel object link:", vm.toString())
 
+        vm.showMessageListener = this
+
         binding = FragmentNoteEditingBinding.inflate(inflater)
 
         setUpToolBar()
-        setUpEditTexts()
+        setUpEditTexts(vm.currentRvPosition)
 
         return binding.root
+    }
+
+    override fun onStop() {
+        Log.d("FragmentLifeCycle", "onStop")
+
+        val title = binding.titleTV.text.toString()
+        val text = binding.textTV.text.toString()
+
+        vm.updateOrCreateNote(title, text)
+
+        super.onStop()
     }
 
     private fun setUpToolBar() {
@@ -62,57 +73,17 @@ class NoteEditingFragment(private val id: Int?) : Fragment() {
         }
     }
 
-    private fun setUpEditTexts() {
-        if (id != null) {
-            binding.titleTV.setText(vm.notesList.value!![id].title)
-            binding.textTV.setText(vm.notesList.value!![id].description)
+    private fun setUpEditTexts(position: Int?) {
+        Log.d("setUpEditText","method called")
+        if (position != null) {
+            binding.titleTV.setText(vm.notesList.value!![position].title)
+            binding.textTV.setText(vm.notesList.value!![position].description)
         }
     }
 
-    override fun onAttach(context: Context) {
-        Log.d("FragmentLifeCycle", "onAttach")
-        super.onAttach(context)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        Log.d("FragmentLifeCycle", "onActivityCreated")
-        super.onActivityCreated(savedInstanceState)
-    }
-
-    override fun onStart() {
-        Log.d("FragmentLifeCycle", "onStart")
-        super.onStart()
-    }
-
-    override fun onResume() {
-        Log.d("FragmentLifeCycle", "onResume")
-        super.onResume()
-    }
-
-    override fun onPause() {
-        Log.d("FragmentLifeCycle", "onPause")
-        super.onPause()
-    }
-
-    override fun onStop() {
-        Log.d("FragmentLifeCycle", "onStop")
-
-        val title = binding.titleTV.text.toString()
-        val text = binding.textTV.text.toString()
-
-        vm.updateOrCreateNote(id, title, text)
-
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        Log.d("FragmentLifeCycle", "onDestroy")
-        super.onDestroy()
-    }
-
-    override fun onDetach() {
-        Log.d("FragmentLifeCycle", "onDetach")
-        super.onDetach()
+    override fun showSnackbar() {
+        Log.d("deleteNoteM","showSnack")
+        Snackbar.make(requireView(), R.string.NoteDeleted, Snackbar.LENGTH_SHORT).show()
     }
 
 }

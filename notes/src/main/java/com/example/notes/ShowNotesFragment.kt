@@ -26,6 +26,7 @@ class ShowNotesFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         Dependencies.init(requireContext().applicationContext)
     }
 
@@ -36,6 +37,14 @@ class ShowNotesFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_show_notes, container, false)
 
+        setUpViewModel()
+        setUpRecyclerView(container)
+        setUpFloatingButton()
+
+        return binding.root
+    }
+
+    private fun setUpViewModel() {
         val factory = MainVmFactory(Dependencies.noteRepository)
         vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
 
@@ -44,11 +53,6 @@ class ShowNotesFragment : Fragment() {
         vm.notesList.observe(viewLifecycleOwner) {
             adapter.updateAdapter(it)
         }
-
-        setUpRecyclerView(container)
-        setUpFloatingButton()
-
-        return binding.root
     }
 
     private fun setUpFloatingButton() {
@@ -59,7 +63,7 @@ class ShowNotesFragment : Fragment() {
 
     private fun setUpRecyclerView(container: ViewGroup?) {
         val notes: MutableList<Note> = vm.notesList.value ?: mutableListOf()
-        Log.d("notes", notes.toString())
+
         adapter = NotesListAdapter(
             notes, object : OnNoteClickCallBack {
                 override fun onNoteClick(position: Int) {
@@ -73,7 +77,8 @@ class ShowNotesFragment : Fragment() {
     }
 
     private fun openNoteEditingFragment(position: Int?) {
-        val fragment = NoteEditingFragment(position)
+        val fragment = NoteEditingFragment()
+        vm.currentRvPosition = position
         requireActivity().supportFragmentManager
             .beginTransaction()
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -82,5 +87,6 @@ class ShowNotesFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
+
 
 }
