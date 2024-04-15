@@ -68,10 +68,20 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
 
     private fun deleteNote(position: Int) {
         val id = notesList.value!![position].id
-
         _notesList.value?.removeAt(position)
         viewModelScope.launch {
             noteRepository.deleteNote(id)
+        }
+    }
+
+    fun deleteNoteFromPopUpMenu(){
+        val position = currentRvPosition
+        if (position != null){
+            val id = notesList.value!![position].id
+            _notesList.value?.removeAt(position)
+            viewModelScope.launch {
+                noteRepository.deleteNote(id)
+            }
         }
     }
 

@@ -1,10 +1,11 @@
 package com.example.notes
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -29,33 +30,28 @@ class NoteEditingFragment : Fragment(), ShowMessage {
         Dependencies.init(requireContext().applicationContext)
         activity?.actionBar?.setHomeButtonEnabled(true)
 
-        Log.d("FragmentLifeCycle", "ON CREATE")
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("FragmentLifeCycle", "ON CREATE VIEW")
 
         val factory = MainVmFactory(Dependencies.noteRepository)
         vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
-        Log.d("ViewModel object link:", vm.toString())
 
         vm.showMessageListener = this
 
         binding = FragmentNoteEditingBinding.inflate(inflater)
 
         setUpToolBar()
+        setUpPopUpMenu()
         setUpEditTexts(vm.currentRvPosition)
 
         return binding.root
     }
 
     override fun onStop() {
-        Log.d("FragmentLifeCycle", "onStop")
-
         val title = binding.titleTV.text.toString()
         val text = binding.textTV.text.toString()
 
@@ -64,9 +60,35 @@ class NoteEditingFragment : Fragment(), ShowMessage {
         super.onStop()
     }
 
+
+
+
+    private fun setUpPopUpMenu() {
+        binding.menu.setOnClickListener {
+            val popup = PopupMenu(this.context, it)
+            val inflater: MenuInflater = popup.menuInflater
+            inflater.inflate(R.menu.toolbar_menu, popup.menu)
+
+            popup.setOnMenuItemClickListener {
+                when(it.itemId){
+                    R.id.deleteItem ->{
+                        Toast.makeText(this.context,"Note has been deleted", Toast.LENGTH_SHORT).show()
+                        vm.deleteNoteFromPopUpMenu()
+                        requireActivity().supportFragmentManager.popBackStack()
+                        return@setOnMenuItemClickListener true
+                    }
+                    else -> return@setOnMenuItemClickListener false
+                }
+            }
+
+            popup.show()
+        }
+    }
+
     private fun setUpToolBar() {
         toolBar = binding.toolBar
         toolBar.setNavigationIcon(R.drawable.baseline_arrow_back_24)
+
         toolBar.setNavigationOnClickListener {
             Toast.makeText(binding.root.context, "toolbar", Toast.LENGTH_SHORT).show()
             requireActivity().supportFragmentManager.popBackStack()
@@ -74,7 +96,6 @@ class NoteEditingFragment : Fragment(), ShowMessage {
     }
 
     private fun setUpEditTexts(position: Int?) {
-        Log.d("setUpEditText","method called")
         if (position != null) {
             binding.titleTV.setText(vm.notesList.value!![position].title)
             binding.textTV.setText(vm.notesList.value!![position].description)
@@ -82,8 +103,7 @@ class NoteEditingFragment : Fragment(), ShowMessage {
     }
 
     override fun showSnackbar() {
-        Log.d("deleteNoteM","showSnack")
-        Snackbar.make(requireView(), R.string.NoteDeleted, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(requireView(), R.string.note_deleted, Snackbar.LENGTH_SHORT).show()
     }
 
 }

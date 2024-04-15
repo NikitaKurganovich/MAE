@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Notes</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="Text">Text</string>
-    <string name="Title">Title</string>
-    <string name="LastModified">Last modified: 12:25 p.m. </string>
-    <string name="NoteDeleted">Empty note has been deleted</string>
+    <string name="text">Text</string>
+    <string name="title">Title</string>
+    <string name="last_modified">Last modified: 12:25 p.m. </string>
+    <string name="note_deleted">Empty note has been deleted</string>
+    <string name="delete_note">Delete a note</string>
+    <string name="copy">Copy</string>
 </resources>
