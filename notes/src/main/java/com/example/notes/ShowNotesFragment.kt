@@ -1,7 +1,6 @@
 package com.example.notes
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,8 +47,6 @@ class ShowNotesFragment : Fragment() {
         val factory = MainVmFactory(Dependencies.noteRepository)
         vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
 
-        Log.d("ViewModel object link:", "$vm is showNotes")
-
         vm.notesList.observe(viewLifecycleOwner) {
             adapter.updateAdapter(it)
         }
@@ -87,6 +84,4 @@ class ShowNotesFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
-
-
 }

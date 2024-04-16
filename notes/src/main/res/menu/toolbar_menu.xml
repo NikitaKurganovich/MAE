@@ -4,6 +4,6 @@
         android:id="@+id/deleteItem"
         android:title="@string/delete_note" />
     <item
-        android:id="@+id/Item"
-        android:title="@string/copy" />
+        android:id="@+id/shareItem"
+        android:title="@string/share" />
 </menu>

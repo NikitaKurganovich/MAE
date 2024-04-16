@@ -7,4 +7,5 @@
     <string name="note_deleted">Empty note has been deleted</string>
     <string name="delete_note">Delete a note</string>
     <string name="copy">Copy</string>
+    <string name="share">Share</string>
 </resources>

@@ -17,12 +17,12 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
     val notesList get() = _notesList
 
     var currentRvPosition: Int? = null
+
     private var isNoteDeleted = false
 
     init {
         viewModelScope.launch {
             _notesList.value = noteRepository.getAllNotes().asReversed()
-
         }
     }
 
@@ -40,20 +40,16 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
     fun updateOrCreateNote(title: String, text: String, showMessageListener: ShowMessage) {
         if (!isNoteDeleted) {
             if (currentRvPosition == null) insertNote(title, text)
-            else {
-                if (title.isEmpty() && text.isEmpty()) {
-                    showMessageListener.showSnackbar()
-                    deleteNote(currentRvPosition!!)
-                } else updateNote(currentRvPosition!!, title, text)
-            }
+            else if (title.isEmpty() && text.isEmpty()) {
+                showMessageListener.showSnackbar()
+                deleteNote(currentRvPosition!!)
+            } else updateNote(currentRvPosition!!, title, text)
         }
         isNoteDeleted = false
     }
 
+
     private fun updateNote(position: Int, title: String, text: String) {
-
-        // Log.d("NotePosition", " position - $position")
-
         if (title.isNotEmpty() || text.isNotEmpty()) {
             val updatedNote = Note(
                 notesList.value!![position].id,
@@ -79,14 +75,10 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
     fun deleteNoteFromPopupMenu(showMessageListener: ShowMessage) {
         val position = currentRvPosition
         if (position != null) {
-            val id = notesList.value!![position].id
-            _notesList.value?.removeAt(position)
-            viewModelScope.launch {
-                noteRepository.deleteNote(id)
-            }
+            deleteNote(position)
+            isNoteDeleted = true
+            showMessageListener.showSnackbar()
         }
-        isNoteDeleted = true
-        showMessageListener.showSnackbar()
     }
 
 }

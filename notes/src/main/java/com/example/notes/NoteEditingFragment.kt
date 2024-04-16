@@ -1,13 +1,12 @@
 package com.example.notes
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.notes.databinding.FragmentNoteEditingBinding
@@ -38,14 +37,13 @@ class NoteEditingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val factory = MainVmFactory(Dependencies.noteRepository)
-        vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
-
         binding = FragmentNoteEditingBinding.inflate(inflater)
+
+        setUpViewModel()
+        setUpEditTexts(vm.currentRvPosition)
 
         setUpToolBar()
         setUpPopUpMenu()
-        setUpEditTexts(vm.currentRvPosition)
 
         return binding.root
     }
@@ -67,6 +65,26 @@ class NoteEditingFragment : Fragment() {
         super.onStop()
     }
 
+    private fun setUpViewModel() {
+        val factory = MainVmFactory(Dependencies.noteRepository)
+        vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
+    }
+
+    private fun setUpToolBar() {
+        toolBar = binding.toolBar
+        toolBar.setNavigationIcon(R.drawable.baseline_arrow_back_24)
+
+        toolBar.setNavigationOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
+    private fun setUpEditTexts(position: Int?) {
+        if (position != null) {
+            binding.titleTV.setText(vm.notesList.value!![position].title)
+            binding.textTV.setText(vm.notesList.value!![position].description)
+        }
+    }
 
     private fun setUpPopUpMenu() {
         binding.menu.setOnClickListener {
@@ -77,7 +95,6 @@ class NoteEditingFragment : Fragment() {
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.deleteItem -> {
-                        Log.d("popup","вызов нахуй")
                         vm.deleteNoteFromPopupMenu(object : ShowMessage {
                             override fun showSnackbar() {
                                 Snackbar.make(
@@ -91,30 +108,27 @@ class NoteEditingFragment : Fragment() {
                         return@setOnMenuItemClickListener true
                     }
 
+                    R.id.shareItem -> {
+                        setUpShareSheet()
+                        return@setOnMenuItemClickListener true
+                    }
+
                     else -> return@setOnMenuItemClickListener false
                 }
             }
-
             popup.show()
         }
     }
 
-    private fun setUpToolBar() {
-        toolBar = binding.toolBar
-        toolBar.setNavigationIcon(R.drawable.baseline_arrow_back_24)
-
-        toolBar.setNavigationOnClickListener {
-            Toast.makeText(binding.root.context, "toolbar", Toast.LENGTH_SHORT).show()
-            requireActivity().supportFragmentManager.popBackStack()
+    private fun setUpShareSheet() {
+        val shareText = binding.textTV.text
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            type = "text/plain"
         }
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
-
-    private fun setUpEditTexts(position: Int?) {
-        if (position != null) {
-            binding.titleTV.setText(vm.notesList.value!![position].title)
-            binding.textTV.setText(vm.notesList.value!![position].description)
-        }
-    }
-
 
 }
