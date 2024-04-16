@@ -1,6 +1,5 @@
 package com.example.notes.vm
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,8 +16,8 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
     private var _notesList: MutableLiveData<MutableList<Note>> = MutableLiveData()
     val notesList get() = _notesList
 
-    var showMessageListener: ShowMessage? = null
     var currentRvPosition: Int? = null
+    private var isNoteDeleted = false
 
     init {
         viewModelScope.launch {
@@ -38,19 +37,22 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
         }
     }
 
-    fun updateOrCreateNote(title: String, text: String) {
-        if (currentRvPosition == null) insertNote(title, text)
-        else {
-            if (title.isEmpty() && text.isEmpty()) {
-                showMessageListener?.showSnackbar()
-                deleteNote(currentRvPosition!!)
-            } else updateNote(currentRvPosition!!, title, text)
+    fun updateOrCreateNote(title: String, text: String, showMessageListener: ShowMessage) {
+        if (!isNoteDeleted) {
+            if (currentRvPosition == null) insertNote(title, text)
+            else {
+                if (title.isEmpty() && text.isEmpty()) {
+                    showMessageListener.showSnackbar()
+                    deleteNote(currentRvPosition!!)
+                } else updateNote(currentRvPosition!!, title, text)
+            }
         }
+        isNoteDeleted = false
     }
 
     private fun updateNote(position: Int, title: String, text: String) {
 
-        Log.d("NotePosition", " position - $position")
+        // Log.d("NotePosition", " position - $position")
 
         if (title.isNotEmpty() || text.isNotEmpty()) {
             val updatedNote = Note(
@@ -74,15 +76,17 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
         }
     }
 
-    fun deleteNoteFromPopUpMenu(){
+    fun deleteNoteFromPopupMenu(showMessageListener: ShowMessage) {
         val position = currentRvPosition
-        if (position != null){
+        if (position != null) {
             val id = notesList.value!![position].id
             _notesList.value?.removeAt(position)
             viewModelScope.launch {
                 noteRepository.deleteNote(id)
             }
         }
+        isNoteDeleted = true
+        showMessageListener.showSnackbar()
     }
 
 }

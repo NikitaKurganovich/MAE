@@ -1,6 +1,7 @@
 package com.example.notes
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
@@ -18,7 +19,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 
 
-class NoteEditingFragment : Fragment(), ShowMessage {
+class NoteEditingFragment : Fragment() {
 
     private lateinit var binding: FragmentNoteEditingBinding
     private lateinit var vm: MainVM
@@ -40,8 +41,6 @@ class NoteEditingFragment : Fragment(), ShowMessage {
         val factory = MainVmFactory(Dependencies.noteRepository)
         vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
 
-        vm.showMessageListener = this
-
         binding = FragmentNoteEditingBinding.inflate(inflater)
 
         setUpToolBar()
@@ -55,12 +54,18 @@ class NoteEditingFragment : Fragment(), ShowMessage {
         val title = binding.titleTV.text.toString()
         val text = binding.textTV.text.toString()
 
-        vm.updateOrCreateNote(title, text)
+        vm.updateOrCreateNote(title, text, object : ShowMessage {
+            override fun showSnackbar() {
+                Snackbar.make(
+                    requireActivity().findViewById(R.id.container),
+                    R.string.note_deleted,
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        })
 
         super.onStop()
     }
-
-
 
 
     private fun setUpPopUpMenu() {
@@ -70,13 +75,22 @@ class NoteEditingFragment : Fragment(), ShowMessage {
             inflater.inflate(R.menu.toolbar_menu, popup.menu)
 
             popup.setOnMenuItemClickListener {
-                when(it.itemId){
-                    R.id.deleteItem ->{
-                        Toast.makeText(this.context,"Note has been deleted", Toast.LENGTH_SHORT).show()
-                        vm.deleteNoteFromPopUpMenu()
+                when (it.itemId) {
+                    R.id.deleteItem -> {
+                        Log.d("popup","вызов нахуй")
+                        vm.deleteNoteFromPopupMenu(object : ShowMessage {
+                            override fun showSnackbar() {
+                                Snackbar.make(
+                                    requireActivity().findViewById(R.id.container),
+                                    R.string.delete_note,
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                            }
+                        })
                         requireActivity().supportFragmentManager.popBackStack()
                         return@setOnMenuItemClickListener true
                     }
+
                     else -> return@setOnMenuItemClickListener false
                 }
             }
@@ -102,8 +116,5 @@ class NoteEditingFragment : Fragment(), ShowMessage {
         }
     }
 
-    override fun showSnackbar() {
-        Snackbar.make(requireView(), R.string.note_deleted, Snackbar.LENGTH_SHORT).show()
-    }
 
 }
