@@ -95,16 +95,7 @@ class NoteEditingFragment : Fragment() {
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.deleteItem -> {
-                        vm.deleteNoteFromPopupMenu(object : ShowMessage {
-                            override fun showSnackbar() {
-                                Snackbar.make(
-                                    requireActivity().findViewById(R.id.container),
-                                    R.string.delete_note,
-                                    Snackbar.LENGTH_SHORT
-                                ).show()
-                            }
-                        })
-                        requireActivity().supportFragmentManager.popBackStack()
+                        deleteNote()
                         return@setOnMenuItemClickListener true
                     }
 
@@ -118,6 +109,19 @@ class NoteEditingFragment : Fragment() {
             }
             popup.show()
         }
+    }
+
+    private fun deleteNote() {
+        vm.deleteNoteFromPopupMenu(object : ShowMessage {
+            override fun showSnackbar() {
+                Snackbar.make(
+                    requireActivity().findViewById(R.id.container),
+                    R.string.delete_note,
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        })
+        requireActivity().supportFragmentManager.popBackStack()
     }
 
     private fun setUpShareSheet() {
