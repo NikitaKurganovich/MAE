@@ -60,7 +60,7 @@ class ShowNotesFragment : Fragment() {
         }
     }
 
-    private fun setUpRecyclerViewSelectionTracker(){
+    private fun setUpRecyclerViewSelectionTracker() {
         tracker = SelectionTracker.Builder(
             "mySelection",
             binding.recyclerView,
@@ -71,7 +71,7 @@ class ShowNotesFragment : Fragment() {
 
         adapter.tracker = tracker
 
-        tracker!!.addObserver(object : SelectionTracker.SelectionObserver<Note>() {
+        tracker?.addObserver(object : SelectionTracker.SelectionObserver<Note>() {
             override fun onSelectionChanged() {
                 super.onSelectionChanged()
                 val materialToolbar = binding.materialToolbar
@@ -80,9 +80,11 @@ class ShowNotesFragment : Fragment() {
 
                 if (items > 0) {
                     menuButton.visibility = View.VISIBLE
-                    materialToolbar.setNavigationIcon(R.drawable.baseline_close_24)
                     materialToolbar.title = items.toString()
+
+                    materialToolbar.setNavigationIcon(R.drawable.baseline_close_24)
                     materialToolbar.setNavigationOnClickListener {
+                        tracker!!.clearSelection()
                     }
                 } else {
                     menuButton.visibility = View.INVISIBLE
@@ -94,11 +96,23 @@ class ShowNotesFragment : Fragment() {
         })
     }
 
-    private fun setUpToolBar(){
+    private fun setUpToolBar() {
         binding.menu.setOnClickListener {
             val popup = PopupMenu(this.context, it)
             val menuInflater = popup.menuInflater
             menuInflater.inflate(R.menu.toolbar_menu, popup.menu)
+            popup.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.deleteItem -> {
+
+                        vm.deleteSelectedNotes( tracker?.selection!!)
+                        tracker?.clearSelection()
+                        return@setOnMenuItemClickListener true
+                    }
+
+                    else -> return@setOnMenuItemClickListener false
+                }
+            }
             popup.show()
         }
     }

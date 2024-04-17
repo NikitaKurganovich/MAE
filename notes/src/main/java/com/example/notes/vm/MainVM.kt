@@ -3,6 +3,7 @@ package com.example.notes.vm
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.selection.Selection
 import com.example.notes.models.Note
 import com.example.notes.repository.NoteRepository
 import kotlinx.coroutines.launch
@@ -79,6 +80,19 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
             isNoteDeleted = true
             showMessageListener.showSnackbar()
         }
+    }
+
+
+    fun deleteSelectedNotes(selectedNotes: Selection<Note>) {
+        val newList = notesList.value!!
+        selectedNotes.forEach { note ->
+            newList.removeIf { it.id == note.id }
+            viewModelScope.launch {
+                noteRepository.deleteNote(note.id)
+            }
+        }
+
+        _notesList.value = newList
     }
 
 }
