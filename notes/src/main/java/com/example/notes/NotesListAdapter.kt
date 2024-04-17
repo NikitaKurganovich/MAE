@@ -55,27 +55,22 @@ class NotesListAdapter(
             listener.onNoteClick(position)
         }
 
+        tracker.let {
+            val (strokeColorId, strokeWidthDp) = if (tracker!!.isSelected(notes[position])) {
+                Pair(R.color.md_theme_dark_tertiary, 3)
+            } else {
+                Pair(R.color.md_theme_dark_outline, 1)
+            }
 
-        if(tracker!!.isSelected(notes[position])){
-            holder.note.strokeColor = ContextCompat.getColor(holder.itemView.context, R.color.md_theme_dark_tertiary)
-            val strokeWidthDp = 3 // The stroke width in dp
-            val strokeWidthPx = TypedValue.applyDimension(
+            holder.note.strokeColor = ContextCompat.getColor(holder.itemView.context, strokeColorId)
+            holder.note.strokeWidth = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 strokeWidthDp.toFloat(),
                 holder.note.context.resources.displayMetrics
             ).toInt()
-
-            holder.note.strokeWidth = strokeWidthPx
-
-
-            holder.note.strokeWidth = strokeWidthPx
-
         }
-        else{
-           // holder.note.setS
-        }
+
         Log.d("tracker Selection",tracker!!.selection.size().toString())
-
 
     }
 

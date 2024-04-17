@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -42,17 +44,8 @@ class ShowNotesFragment : Fragment() {
 
         setUpViewModel()
         setUpRecyclerView(container)
-
-        tracker = SelectionTracker.Builder(
-            "mySelection",
-            binding.recyclerView,
-            NoteKeyProvider(adapter),
-            NoteDetailsLookup(binding.recyclerView),
-            StorageStrategy.createParcelableStorage(Note::class.java)
-        ).withSelectionPredicate(SelectionPredicates.createSelectAnything()).build()
-
-        adapter.tracker = tracker
-
+        setUpToolBar()
+        setUpRecyclerViewSelectionTracker()
         setUpFloatingButton()
 
         return binding.root
@@ -64,6 +57,49 @@ class ShowNotesFragment : Fragment() {
 
         vm.notesList.observe(viewLifecycleOwner) {
             adapter.updateAdapter(it)
+        }
+    }
+
+    private fun setUpRecyclerViewSelectionTracker(){
+        tracker = SelectionTracker.Builder(
+            "mySelection",
+            binding.recyclerView,
+            NoteKeyProvider(adapter),
+            NoteDetailsLookup(binding.recyclerView),
+            StorageStrategy.createParcelableStorage(Note::class.java)
+        ).withSelectionPredicate(SelectionPredicates.createSelectAnything()).build()
+
+        adapter.tracker = tracker
+
+        tracker!!.addObserver(object : SelectionTracker.SelectionObserver<Note>() {
+            override fun onSelectionChanged() {
+                super.onSelectionChanged()
+                val materialToolbar = binding.materialToolbar
+                val items = tracker!!.selection.size()
+                val menuButton = binding.menu
+
+                if (items > 0) {
+                    menuButton.visibility = View.VISIBLE
+                    materialToolbar.setNavigationIcon(R.drawable.baseline_close_24)
+                    materialToolbar.title = items.toString()
+                    materialToolbar.setNavigationOnClickListener {
+                    }
+                } else {
+                    menuButton.visibility = View.INVISIBLE
+                    materialToolbar.title =
+                        ContextCompat.getString(requireContext(), R.string.app_name)
+                    materialToolbar.navigationIcon = null
+                }
+            }
+        })
+    }
+
+    private fun setUpToolBar(){
+        binding.menu.setOnClickListener {
+            val popup = PopupMenu(this.context, it)
+            val menuInflater = popup.menuInflater
+            menuInflater.inflate(R.menu.toolbar_menu, popup.menu)
+            popup.show()
         }
     }
 
