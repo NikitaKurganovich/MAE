@@ -5,6 +5,7 @@ plugins {
     id("com.android.application").apply(false)
     id("com.android.library").apply(false)
     kotlin("kapt").apply(false) version "1.9.22"
+    id("androidx.room") version "2.6.1" apply false
 }
 
 allprojects {

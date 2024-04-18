@@ -16,6 +16,8 @@ import com.example.notes.vm.MainVmFactory
 import com.example.notes.vm.ShowMessage
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class NoteEditingFragment : Fragment() {
@@ -80,9 +82,15 @@ class NoteEditingFragment : Fragment() {
     }
 
     private fun setUpEditTexts(position: Int?) {
+        val formatter = DateTimeFormatter.ofPattern("dd MMM  yyyy       HH:mm")
         if (position != null) {
+            val date = vm.notesList.value!![position].lastChanges.format(formatter)
             binding.titleTV.setText(vm.notesList.value!![position].title)
             binding.textTV.setText(vm.notesList.value!![position].description)
+            binding.lastModified.text = date
+        } else {
+            val date = LocalDateTime.now().format(formatter)
+            binding.lastModified.text = date
         }
     }
 

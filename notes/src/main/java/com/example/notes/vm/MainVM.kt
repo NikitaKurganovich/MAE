@@ -7,6 +7,7 @@ import androidx.recyclerview.selection.Selection
 import com.example.notes.models.Note
 import com.example.notes.repository.NoteRepository
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 interface ShowMessage {
     fun showSnackbar()
@@ -30,9 +31,9 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
     private fun insertNote(title: String, text: String) {
         if (title.isNotEmpty() || text.isNotEmpty()) {
             viewModelScope.launch {
-                val newNoteId = noteRepository.insertNewStatisticData(Note(0, title, text))
+                val newNoteId = noteRepository.insertNewStatisticData(Note(0, title, text, LocalDateTime.now()))
                 val updatedNotesList = _notesList.value?.toMutableList()
-                updatedNotesList?.add(0, Note(newNoteId.toInt(), title, text))
+                updatedNotesList?.add(0, Note(newNoteId.toInt(), title, text,LocalDateTime.now()))
                 _notesList.value = updatedNotesList!!
             }
         }
@@ -55,7 +56,8 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
             val updatedNote = Note(
                 notesList.value!![position].id,
                 title,
-                text
+                text,
+                LocalDateTime.now()
             )
             viewModelScope.launch {
                 noteRepository.updateNote(updatedNote)
