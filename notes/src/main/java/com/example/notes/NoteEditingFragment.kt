@@ -42,7 +42,7 @@ class NoteEditingFragment : Fragment() {
         binding = FragmentNoteEditingBinding.inflate(inflater)
 
         setUpViewModel()
-        setUpEditTexts(vm.currentRvPosition)
+        setUpEditTexts()
 
         setUpToolBar()
         setUpPopUpMenu()
@@ -64,6 +64,7 @@ class NoteEditingFragment : Fragment() {
             }
         })
 
+
         super.onStop()
     }
 
@@ -81,14 +82,14 @@ class NoteEditingFragment : Fragment() {
         }
     }
 
-    private fun setUpEditTexts(position: Int?) {
+    private fun setUpEditTexts() {
         val formatter = DateTimeFormatter.ofPattern("dd MMM  yyyy       HH:mm")
-        if (position != null) {
-            val date = vm.notesList.value!![position].lastChanges.format(formatter)
-            binding.titleTV.setText(vm.notesList.value!![position].title)
-            binding.textTV.setText(vm.notesList.value!![position].description)
-            binding.lastModified.text = date
-        } else {
+
+        vm.selectedNote?.let {
+            binding.titleTV.setText(it.title)
+            binding.textTV.setText(it.description)
+            binding.lastModified.text = it.lastChanges.format(formatter)
+        } ?: run {
             val date = LocalDateTime.now().format(formatter)
             binding.lastModified.text = date
         }
@@ -120,6 +121,7 @@ class NoteEditingFragment : Fragment() {
     }
 
     private fun deleteNote() {
+
         vm.deleteNoteFromPopupMenu(object : ShowMessage {
             override fun showSnackbar() {
                 Snackbar.make(

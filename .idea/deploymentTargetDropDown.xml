@@ -41,20 +41,7 @@
         </State>
       </entry>
       <entry key="notes">
-        <State>
-          <runningDeviceTargetSelectedWithDropDown>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="SERIAL_NUMBER" />
-                  <value value="38231JEHN05951" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-04-18T15:17:19.875692Z" />
-        </State>
+        <State />
       </entry>
     </value>
   </component>

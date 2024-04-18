@@ -18,9 +18,9 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
     private var _notesList: MutableLiveData<MutableList<Note>> = MutableLiveData()
     val notesList get() = _notesList
 
-    var currentRvPosition: Int? = null
-
+    private var listPosition: Int? = null
     private var isNoteDeleted = false
+    var selectedNote: Note? = null
 
     init {
         viewModelScope.launch {
@@ -31,9 +31,10 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
     private fun insertNote(title: String, text: String) {
         if (title.isNotEmpty() || text.isNotEmpty()) {
             viewModelScope.launch {
-                val newNoteId = noteRepository.insertNewStatisticData(Note(0, title, text, LocalDateTime.now()))
+                val newNoteId =
+                    noteRepository.insertNewStatisticData(Note(0, title, text, LocalDateTime.now()))
                 val updatedNotesList = _notesList.value?.toMutableList()
-                updatedNotesList?.add(0, Note(newNoteId.toInt(), title, text,LocalDateTime.now()))
+                updatedNotesList?.add(0, Note(newNoteId.toInt(), title, text, LocalDateTime.now()))
                 _notesList.value = updatedNotesList!!
             }
         }
@@ -41,49 +42,53 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
 
     fun updateOrCreateNote(title: String, text: String, showMessageListener: ShowMessage) {
         if (!isNoteDeleted) {
-            if (currentRvPosition == null) insertNote(title, text)
+            if (selectedNote == null) insertNote(title, text)
             else if (title.isEmpty() && text.isEmpty()) {
                 showMessageListener.showSnackbar()
-                deleteNote(currentRvPosition!!)
-            } else updateNote(currentRvPosition!!, title, text)
+                deleteNote()
+            } else updateNote(title, text)
         }
         isNoteDeleted = false
     }
 
-
-    private fun updateNote(position: Int, title: String, text: String) {
-        if (title.isNotEmpty() || text.isNotEmpty()) {
-            val updatedNote = Note(
-                notesList.value!![position].id,
-                title,
-                text,
-                LocalDateTime.now()
-            )
-            viewModelScope.launch {
-                noteRepository.updateNote(updatedNote)
+    /** The noteRepository.updateNote(updatedNote) method should be at the bottom, the _notesList update can be taken out of the coroutineScope **/
+    private fun updateNote(title: String, text: String) {
+        selectedNote?.let { note ->
+            if (title.isNotEmpty() || text.isNotEmpty()) {
+                val updatedNote = Note(
+                    note.id,
+                    title,
+                    text,
+                    LocalDateTime.now()
+                )
+                viewModelScope.launch {
+                    listPosition?.let { listPosition ->
+                        _notesList.value?.get(listPosition)?.title = title
+                        _notesList.value?.get(listPosition)?.description = text
+                    }
+                    noteRepository.updateNote(updatedNote)
+                }
             }
-            _notesList.value!![position].title = title
-            _notesList.value!![position].description = text
         }
     }
 
-    private fun deleteNote(position: Int) {
-        val id = notesList.value!![position].id
-        _notesList.value?.removeAt(position)
-        viewModelScope.launch {
-            noteRepository.deleteNote(id)
+    private fun deleteNote() {
+        listPosition?.let { listPosition ->
+            val id = notesList.value!![listPosition].id
+            _notesList.value?.removeAt(listPosition)
+            viewModelScope.launch {
+                noteRepository.deleteNote(id)
+            }
         }
     }
 
     fun deleteNoteFromPopupMenu(showMessageListener: ShowMessage) {
-        val position = currentRvPosition
-        if (position != null) {
-            deleteNote(position)
+        listPosition?.let {
+            deleteNote()
             isNoteDeleted = true
             showMessageListener.showSnackbar()
         }
     }
-
 
     fun deleteSelectedNotes(selectedNotes: Selection<Note>) {
         val newList = notesList.value!!
@@ -93,8 +98,16 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
                 noteRepository.deleteNote(note.id)
             }
         }
-
         _notesList.value = newList
     }
 
+    fun setUpNote(position: Int?) {
+        position?.let {
+            selectedNote = notesList.value!![position]
+            listPosition = position
+        } ?: run {
+            selectedNote = null
+            listPosition = null
+        }
+    }
 }

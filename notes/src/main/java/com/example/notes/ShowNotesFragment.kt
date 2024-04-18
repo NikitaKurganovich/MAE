@@ -1,6 +1,7 @@
 package com.example.notes
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +57,8 @@ class ShowNotesFragment : Fragment() {
         vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
 
         vm.notesList.observe(viewLifecycleOwner) {
+            Log.d("selectionNote", "ADAPTER UPDATED")
+            Log.d("selectionNote", "${vm.notesList.value!!}")
             adapter.updateAdapter(it)
         }
     }
@@ -105,7 +108,7 @@ class ShowNotesFragment : Fragment() {
                 when (it.itemId) {
                     R.id.deleteItem -> {
 
-                        vm.deleteSelectedNotes( tracker?.selection!!)
+                        vm.deleteSelectedNotes(tracker?.selection!!)
                         tracker?.clearSelection()
                         return@setOnMenuItemClickListener true
                     }
@@ -140,7 +143,7 @@ class ShowNotesFragment : Fragment() {
 
     private fun openNoteEditingFragment(position: Int?) {
         val fragment = NoteEditingFragment()
-        vm.currentRvPosition = position
+        vm.setUpNote(position)
         requireActivity().supportFragmentManager
             .beginTransaction()
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
