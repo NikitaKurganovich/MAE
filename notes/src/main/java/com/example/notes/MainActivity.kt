@@ -12,14 +12,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        val fragment = ShowNotesFragment()
+        if (savedInstanceState == null) {
+            val fragment = ShowNotesFragment()
 
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.container,fragment,"s")
-        fragmentTransaction.commit()
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.add(R.id.container, fragment, "s")
+            fragmentTransaction.commit()
 
-        setContentView(binding.root)
+            setContentView(binding.root)
+        }
     }
 }

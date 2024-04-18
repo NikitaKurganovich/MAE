@@ -40,6 +40,7 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
         }
     }
 
+
     fun updateOrCreateNote(title: String, text: String, showMessageListener: ShowMessage) {
         if (!isNoteDeleted) {
             if (selectedNote == null) insertNote(title, text)
@@ -103,8 +104,8 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
 
     fun setUpNote(position: Int?) {
         position?.let {
-            selectedNote = notesList.value!![position]
-            listPosition = position
+            selectedNote = notesList.value!![it]
+            listPosition = it
         } ?: run {
             selectedNote = null
             listPosition = null
