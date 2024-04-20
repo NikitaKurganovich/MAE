@@ -1,10 +1,10 @@
-package com.example.notes.db
+package com.example.notes.database
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.notes.repository.NoteRepository
+import com.example.notes.repositories.NoteRepository
 
 object Dependencies {
     private lateinit var applicationContext: Context

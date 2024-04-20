@@ -1,4 +1,4 @@
-package com.example.notes.db
+package com.example.notes.database
 
 import androidx.room.TypeConverter
 import java.time.Instant

@@ -1,7 +1,7 @@
-package com.example.notes
+package com.example.notes.screens.recyclerViewAdapters
 
 import androidx.recyclerview.selection.ItemKeyProvider
-import com.example.notes.models.Note
+import com.example.notes.database.entities.Note
 
 class NoteKeyProvider(private val adapter: NotesListAdapter) : ItemKeyProvider<Note>(SCOPE_CACHED) {
     override fun getKey(position: Int): Note {

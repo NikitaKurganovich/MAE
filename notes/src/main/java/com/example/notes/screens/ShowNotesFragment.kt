@@ -1,7 +1,6 @@
-package com.example.notes
+package com.example.notes.screens
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,9 +15,14 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notes.R
+import com.example.notes.database.Dependencies
+import com.example.notes.database.entities.Note
 import com.example.notes.databinding.FragmentShowNotesBinding
-import com.example.notes.db.Dependencies
-import com.example.notes.models.Note
+import com.example.notes.screens.recyclerViewAdapters.NoteDetailsLookup
+import com.example.notes.screens.recyclerViewAdapters.NoteKeyProvider
+import com.example.notes.screens.recyclerViewAdapters.NotesListAdapter
+import com.example.notes.screens.recyclerViewAdapters.OnNoteClickCallBack
 import com.example.notes.vm.MainVM
 import com.example.notes.vm.MainVmFactory
 
@@ -57,8 +61,6 @@ class ShowNotesFragment : Fragment() {
         vm = ViewModelProvider(requireActivity(), factory)[MainVM::class.java]
 
         vm.notesList.observe(viewLifecycleOwner) {
-            Log.d("selectionNote", "ADAPTER UPDATED")
-            Log.d("selectionNote", "${vm.notesList.value!!}")
             adapter.updateAdapter(it)
         }
     }
@@ -103,7 +105,7 @@ class ShowNotesFragment : Fragment() {
         binding.menu.setOnClickListener {
             val popup = PopupMenu(this.context, it)
             val menuInflater = popup.menuInflater
-            menuInflater.inflate(R.menu.toolbar_menu, popup.menu)
+            menuInflater.inflate(R.menu.toolbar_menu_show_fragment, popup.menu)
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.deleteItem -> {

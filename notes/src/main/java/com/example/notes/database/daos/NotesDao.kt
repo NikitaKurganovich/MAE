@@ -1,10 +1,10 @@
-package com.example.notes.dao
+package com.example.notes.database.daos
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.notes.models.Note
+import com.example.notes.database.entities.Note
 
 @Dao
 interface NotesDao {

@@ -1,8 +1,9 @@
-package com.example.notes
+package com.example.notes.screens
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.example.notes.R
 import com.example.notes.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

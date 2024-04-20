@@ -1,4 +1,4 @@
-package com.example.notes
+package com.example.notes.screens
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,8 +9,9 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.notes.R
+import com.example.notes.database.Dependencies
 import com.example.notes.databinding.FragmentNoteEditingBinding
-import com.example.notes.db.Dependencies
 import com.example.notes.vm.MainVM
 import com.example.notes.vm.MainVmFactory
 import com.example.notes.vm.ShowMessage
@@ -58,7 +59,7 @@ class NoteEditingFragment : Fragment() {
             override fun showSnackbar() {
                 Snackbar.make(
                     requireActivity().findViewById(R.id.container),
-                    R.string.note_deleted,
+                    R.string.empty_note_deleted,
                     Snackbar.LENGTH_SHORT
                 ).show()
             }
@@ -126,7 +127,7 @@ class NoteEditingFragment : Fragment() {
             override fun showSnackbar() {
                 Snackbar.make(
                     requireActivity().findViewById(R.id.container),
-                    R.string.delete_note,
+                    R.string.note_deleted,
                     Snackbar.LENGTH_SHORT
                 ).show()
             }

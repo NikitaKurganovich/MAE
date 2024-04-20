@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.selection.Selection
-import com.example.notes.models.Note
-import com.example.notes.repository.NoteRepository
+import com.example.notes.database.entities.Note
+import com.example.notes.repositories.NoteRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 

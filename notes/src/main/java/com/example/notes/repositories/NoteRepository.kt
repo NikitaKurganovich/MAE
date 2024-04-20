@@ -1,7 +1,7 @@
-package com.example.notes.repository
+package com.example.notes.repositories
 
-import com.example.notes.dao.NotesDao
-import com.example.notes.models.Note
+import com.example.notes.database.daos.NotesDao
+import com.example.notes.database.entities.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

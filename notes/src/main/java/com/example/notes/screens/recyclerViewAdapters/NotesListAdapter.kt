@@ -1,5 +1,6 @@
-package com.example.notes
+package com.example.notes.screens.recyclerViewAdapters
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -10,7 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
-import com.example.notes.models.Note
+import com.example.notes.R
+import com.example.notes.database.entities.Note
 import com.google.android.material.card.MaterialCardView
 
 interface OnNoteClickCallBack {
@@ -74,6 +76,7 @@ class NotesListAdapter(
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateAdapter(newList: MutableList<Note>) {
         notes = newList
         notifyDataSetChanged()
