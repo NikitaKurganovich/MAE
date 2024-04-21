@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("androidx.room")
     kotlin("kapt") version "1.9.22"
 }
 
@@ -8,6 +9,10 @@ android {
     namespace = "com.example.cab"
     compileSdk = 34
 
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 
     dataBinding {
         enable = true
@@ -21,6 +26,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
 
     }
 
@@ -37,6 +43,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+
 }
 
 val androidXTestVersion = "1.5.0"
