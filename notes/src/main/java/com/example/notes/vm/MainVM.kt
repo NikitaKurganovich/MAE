@@ -40,7 +40,6 @@ class MainVM(private val noteRepository: NoteRepository) : ViewModel() {
         }
     }
 
-
     fun updateOrCreateNote(title: String, text: String, showMessageListener: ShowMessage) {
         if (!isNoteDeleted) {
             if (selectedNote == null) insertNote(title, text)
